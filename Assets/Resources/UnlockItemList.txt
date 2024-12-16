@@ -1,0 +1,208 @@
+{
+    "items": [
+        {
+            "ItemName": "SkyWalker",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "Club",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "JadeEmblem",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ClownCloth",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ClownHat",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ClownGloves",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ClownPants",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ClownBoots",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "SymbolRich",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "LightningGloves",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "BattleBookBeginner",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "StrangeCandy",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "VampireCup",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "Cookie",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "PoisonMushroom",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "RootOfTree",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "NightofCountingtheStars",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "GlassSword",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "GridsSword",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "PastThatWantToErase",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ReproductionOfMassacre",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "DivinePower",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "BrokenWatch",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "EyeOfBeast",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "AttackClaw",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "BlackCard",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "RedCard",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "AssassinDagger",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "DoubleEdgedAxe",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ElfBow",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "EscapeRope",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "BundleOfGifts",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "LoveLetter",
+            "isUnlock": true
+        },
+        {
+            "ItemName": "MiniStar",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "HeroMask",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "RepressionShield",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ThreePeas",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "TransmitterHammer",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "SuspiciousMirror",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "VulcanArmor",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "WorkGloves",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "Ocarina",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "PickpocketGloves",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "RingOfLife",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ElunsHat",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ElunsRobe",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ElunsWand",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "FairyFanFlute",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "OrcHorn",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "WoodenShield",
+            "isUnlock": false
+        },
+        {
+            "ItemName": "ShadowSupplyBook",
+            "isUnlock": false
+        }
+    ]
+}

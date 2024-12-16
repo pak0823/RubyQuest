@@ -1,0 +1,57 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!78 &1
+TagManager:
+  serializedVersion: 2
+  tags:
+  - Wall
+  - Boss
+  - Enemy
+  - Sword
+  - Pad
+  - Tilemap
+  - Axe
+  - Arrow
+  - Enemy_atk
+  - Sliding
+  - Slash
+  - Projective_Body
+  - Trap
+  - Skill_arrow
+  layers:
+  - Default
+  - TransparentFX
+  - Ignore Raycast
+  - Enemy
+  - Water
+  - UI
+  - Pad
+  - Tilemap
+  - Jump
+  - Player
+  - Bumpenemy
+  - Dieenemy
+  - Sliding
+  - Invincible
+  - Effect
+  - Boss
+  - Shield
+  - Map
+  - PostProcessing
+  - noPost
+  - Rock
+  - Trap
+  - Drop
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  - 
+  m_SortingLayers:
+  - name: Default
+    uniqueID: 0
+    locked: 0

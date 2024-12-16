@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
+
+public class SuspiciousMirror : itemStatus
+{
+    public override void InitSetting()
+    {
+        data.itemimg = this.GetComponent<Image>();
+        data.itemName = "¼ö»óÇÑ °Å¿ï";
+        data.itemNameEng = "SuspiciousMirror";
+        data.itemPrice = 2250;
+        data.color = Color.magenta;
+        data.Rating = "¿µ¿õ";
+        data.itemExplanation = "»§! ¹Ù¸¦±î? ³î¶úÁö?";
+        data.itemStat = "½Ã¾ß°¡ Á¼¾ÆÁý´Ï´Ù.\nµ¥¹ÌÁö +30%";
+        data.itemNumber = 39;
+        data.DmgIncrease = 0.3f;
+    }
+
+    public override void SpecialPower()
+    {
+        Player player = Shared.player;
+        if (!data.SpecialPower)
+        {
+            player.UseMirror = false;
+        }
+        if (data.SpecialPower)
+        {
+            player.UseMirror = true;
+        }
+        player.Mirror();
+    }
+
+    public override void TextImageSettings(Image img, TextMeshProUGUI NameText, TextMeshProUGUI ExplanationText, TextMeshProUGUI StatText, TextMeshProUGUI PriceText, TextMeshProUGUI RatingText)
+    {
+        base.TextImageSettings(img, NameText, ExplanationText, StatText, PriceText, RatingText);
+    }
+}

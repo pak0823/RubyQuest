@@ -1,0 +1,36 @@
+{
+    "PlayerLevel": 2,
+    "PlayerGold": 1177.5074462890625,
+    "PlayerExp": 0.5253333449363709,
+    "PlayerCurrentHp": 73.0,
+    "PlayerPos": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+    },
+    "Stage": [
+        0,
+        3
+    ],
+    "proWeaponSellect": 0,
+    "proLevel": 0,
+    "proFill": 0.10000000894069672,
+    "PlayTime": 166.87185668945313,
+    "EnemyKill": 20,
+    "TotalGetGold": 1000.0,
+    "TotalDamaged": 921.050537109375,
+    "TotalItems": 0,
+    "LastMarketList": [
+        "HpPotion",
+        "EyeOfBeast",
+        "OrcHorn",
+        "StrangeCandy",
+        "ClownBoots",
+        "ClownCloth"
+    ],
+    "LastChestItem": "",
+    "Difficulty": 0,
+    "FristMaterial": false,
+    "SecondMaterial": false,
+    "ThirdMaterial": false
+}
