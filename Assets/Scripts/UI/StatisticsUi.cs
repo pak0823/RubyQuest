@@ -6,12 +6,12 @@ using TMPro;
 
 public class StatisticsUi : MonoBehaviour
 {
-    public DataManager dm;
-    public MapManager mp;
+    public DataManager dataMgr;
+    public MapManager mapMgr;
     public Scene_Move sm;
     public Fade_img fade;
     public Player player;
-    public OptionManager op;
+    public OptionManager optionMgr;
     public TextMeshProUGUI TitleText;
     public TextMeshProUGUI KillCountText;
     public TextMeshProUGUI GetGoldText;
@@ -83,31 +83,31 @@ public class StatisticsUi : MonoBehaviour
     public void Setting()
     {
         player = Shared.player;
-        op = OptionManager.instance;
-        dm = Shared.dataMgr;
-        mp = Shared.mapMgr;
+        optionMgr = Shared.optionMgr;
+        dataMgr = Shared.dataMgr;
+        mapMgr = Shared.mapMgr;
         KillCountText.text = player.EnemyKillCount.ToString();
         GetGoldText.text = player.TotalGetGold.ToString("F0")+" G";
         TotalDmageText.text = player.TotalDamaged.ToString("F0");
-        PlayTimeText.text = op.returnTimerText();
+        PlayTimeText.text = optionMgr.returnTimerText();
         if (GameClear)
         {
             TitleText.text = "게임 클리어!";
-            dm.GameClear(mp.Difficulty);
+            dataMgr.GameClear(mapMgr.Difficulty);
         }
         else
         {
             die = true;
         }
-        List<GameObject> find = dm.finditem();
+        List<GameObject> find = dataMgr.finditem();
         GetItemText.text = (find.Count).ToString();
         for (int i = 0; i < find.Count; i++)
         {
             Instantiate(find[i], List.transform);
         }
-        OptionManager.instance.Playing = false;
-        dm.DeleteJson();
-        dm.finditemList.Clear();
+        optionMgr.Playing = false;
+        dataMgr.DeleteJson();
+        dataMgr.finditemList.Clear();
     }
 
     void GoTitleScreen()

@@ -130,7 +130,7 @@
         },
         {
             "ItemName": "LoveLetter",
-            "isUnlock": true
+            "isUnlock": false
         },
         {
             "ItemName": "MiniStar",

@@ -4,6 +4,8 @@ using UnityEngine;
 using System.Linq;
 using System.Collections.Generic;
 using System.ComponentModel;
+using static Attack;
+using static UnityEditor.Experimental.GraphView.GraphView;
 
 
 public class Player : MonoBehaviour
@@ -18,12 +20,11 @@ public class Player : MonoBehaviour
     public float Speed; //Move 속도 저장 변수
     public float jumpPower; //Jump 높이 저장 변수
     public float SpeedChange; // Move 속도변경 저장 변수
-    public float curTime, coolTime = 2;  // 연속공격이 가능한 시간
     public float[] MasterSkillTime = { 40, 90, 45 };   //무기별 숙련도 스킬 쿨타임
     public float Sword_MsTime, Axe_MsTime, Bow_MsTime;  // 무기별 숙련도 스킬 쿨타임 적용
     public float[] SkillTime = { 12, 20, 10 }; // 무기별 기본스킬 쿨타임
     public float Sword_SkTime, Axe_SkTime, Bow_SkTime;  // 무기별 기본스킬 쿨타임 적용
-    public float[] WeaponsDmg = { 0.5f, 1.5f, 0.8f }; //무기별 공격력 비례 칼, 도끼, 활
+    public float[] WeaponsDmg = { 0.5f, 2f, 0.8f }; //무기별 공격력 비례 칼, 도끼, 활
     public bool isdelay = false;    //공격 딜레이 체크
     public bool isSlide = false;     //슬라이딩 체크
     public bool isGround = true;    //Player가 땅인지 아닌지 체크
@@ -53,8 +54,8 @@ public class Player : MonoBehaviour
     public float chargingTime = 5f; // 차징 시간
     public bool isCharging = false; // 차징 상태 여부
     public float chargeTimer = 0f; // 차징 시간을 측정하는 타이머
-    public float ArrowDistance = 0.75f;
     public bool Axepro = true;
+    public float ArrowDistance = 1.0f;
     public PlayerCanvas playerCanvas; //추가함
     public Vector3 spawnPoint;  // 2023-09-02 추가(플레이어 리스폰 위치)
 
@@ -119,7 +120,6 @@ public class Player : MonoBehaviour
     public Ui_Controller Ui;  //ui 컨트롤러
     public GameObject attackRange;  //근접공격 위치
     public GameObject Arrow; //화살 오브젝트
-    public GameObject Arrow2; //화살 증가 오브젝트
     public GameObject Slash;  // 검 기본스킬 오브젝트
     public GameObject AxeSkill;  //도끼 마스터스킬 오브젝트
     public GameObject BowSkill;  // 활 기본스킬 오브젝트
@@ -158,6 +158,11 @@ public class Player : MonoBehaviour
     public Animator animator;
     new AudioSource audio;
 
+    private PlayerAttackRoutine _PlayerAttackRoutine;
+    SwordAttack SwordAttackRoutine;
+    AxeAttack AxeAttackRoutine;
+    BowAttack BowAttackRoutine;
+
     //특수 아이템 변수
     public bool UseGridSword = false;
     public bool DivinePower = false;
@@ -179,7 +184,6 @@ public class Player : MonoBehaviour
     void Awake()
     {
         Shared.player = this; //추가함
-
         attackRange = transform.GetChild(0).gameObject; // 플레이어의 0번째 오브젝트인 attackRange를 저장
         rigid = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
@@ -193,7 +197,7 @@ public class Player : MonoBehaviour
         Arrowpos = transform.GetChild(1).GetComponentInChildren<Transform>(); //Arrowpos의 위치값을 pos에 저장
         Arrowpos2 = transform.GetChild(2).GetComponentInChildren<Transform>(); //Arrowpos2의 위치값을 pos에 저장
         Skillpos = transform.GetChild(3).GetComponentInChildren<Transform>(); //Skillpos의 위치값을 pos에 저장
-        Ui = GameManager.GetComponent<Ui_Controller>();
+        Ui =GameManager.GetComponent<Ui_Controller>();
     }
 
     void Start() //추가함
@@ -205,9 +209,13 @@ public class Player : MonoBehaviour
         dataMgr.JsonLoad("PlayerData");
         dataMgr.JsonLoad("ItemData");
         animator.SetFloat("AttackSpeed", ATS);
-        OptionManager.instance.Playing = true;
+        Shared.optionMgr.Playing = true;
         Invoke("HpRegen", 1f);
         AxePro2();
+        SwordAttackRoutine = new SwordAttack(this);
+        AxeAttackRoutine = new AxeAttack(this);
+        BowAttackRoutine = new BowAttack(this);
+        _PlayerAttackRoutine = SwordAttackRoutine;
     }
 
     void Update()
@@ -357,25 +365,9 @@ public class Player : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.S) && !animator.GetBool("Sliding") && !isSkill && !isMasterSkill && !isdelay && !isWall)  //기본 스킬 실행
         {
-            if (WeaponChage == 1 && Sword_SkTime <= 0 && !animator.GetBool("sword_atk"))    //Sword
+            if(!isSkill)
             {
-                Sword_SkTime = DeCoolTimeCarcul(SkillTime[0]); //스킬쿨 수정함
-                isSkill = true;
-                SwdCnt = 2;
-                animator.SetTrigger("sword_atk");
-                animator.SetFloat("Sword", SwdCnt); // 애니메이션에 스킬 실행함수를 넣어뒀음
-            }
-            if (WeaponChage == 2 && Axe_SkTime <= 0)    //Axe
-            {
-                isSkill = true;
-                StartCoroutine(Skill());
-                Axe_SkTime = DeCoolTimeCarcul(SkillTime[1]); //스킬쿨 수정함
-            }
-            if (WeaponChage == 3 && Bow_SkTime <= 0)    //Bow
-            {
-                isSkill = true;
-                StartCoroutine(Skill());
-                Bow_SkTime = DeCoolTimeCarcul(SkillTime[2]); //스킬쿨 수정함
+                _PlayerAttackRoutine.NormalSkill(); // NormalSkill 메서드 호출
             }
         }
         if (Sword_SkTime >= 0)   //Sword 스킬 쿨타임 
@@ -437,26 +429,10 @@ public class Player : MonoBehaviour
         {
             if (!isdelay)   //딜레이가 false일때 공격 가능
             {
-                if (WeaponChage == 1)    //Sword 공격
-                {
-                    Sword_attack();
-                }
-                if (WeaponChage == 2)    //Axe 공격
-                {
-                    Axe_attack();
-                }
-                if (WeaponChage == 3)    //Bow 공격
-                {
-                    isdelay = true;
-                    animator.SetTrigger("arrow_atk");
-                }
+                isdelay = true;
+                _PlayerAttackRoutine.NormalAttack(); // NormalAttack 메서드 호출
                 StartCoroutine(Attack_delay());    //공격후 다음 공격까지 딜레이
             }
-        }
-        else
-        {
-            if (curTime >= 0)
-                curTime -= Time.deltaTime;
         }
 
         if (Input.GetKeyDown(KeyCode.Tab) && GameManager.GetComponent<WeaponSwap>().swaping != true)    // 무기 변경
@@ -479,6 +455,19 @@ public class Player : MonoBehaviour
                     WeaponChage = 1;
                     this.transform.GetChild(0).gameObject.SetActive(true);
                 }
+                switch (WeaponChage)
+                {
+                    case 1: //Sword 공격
+                        _PlayerAttackRoutine = SwordAttackRoutine; // SwordAttack 인스턴스 생성
+                        break;
+                    case 2: //Axe 공격
+                        _PlayerAttackRoutine = AxeAttackRoutine; // AxeAttack 인스턴스 생성
+                        break;
+                    case 3: //Bow 공격
+                        _PlayerAttackRoutine = BowAttackRoutine; // BowAttack 인스턴스 생성
+                        break;
+                }
+
                 WeaponSwap.instance.DoSwap = true;
             }
         }
@@ -513,7 +502,7 @@ public class Player : MonoBehaviour
             }
         }
     }
-    IEnumerator Skill()//스킬 작동시 실행
+    public IEnumerator Skill()//스킬 작동시 실행
     {
         GameManager.GetComponent<WeaponSwap>().Skill();
         if (WeaponChage == 1) //sword 스킬
@@ -615,7 +604,7 @@ public class Player : MonoBehaviour
         {
             isMasterSkill = true;
             GameManager.GetComponent<WeaponSwap>().Ult();
-            AxeCnt = 4;
+            AxeCnt = 3;
             animator.SetFloat("Axe", AxeCnt); //숙련도 스킬은 Axe_atk3 길게 애니메이션으로 실행
             animator.SetTrigger("axe_atk");
             yield return new WaitForSeconds(1.5f * delayTime);
@@ -779,62 +768,42 @@ public class Player : MonoBehaviour
         isdelay = false;
     }
 
-    void Sword_attack() //Sword 공격 관련 정보
-    {
-        isdelay = true;
-        Dmg = (ATP + AtkPower + GridPower + VulcanPower) * WeaponsDmg[0];//변경함
-        box.size = new Vector2(2.5f, 2.5f);
-        box.offset = new Vector2(1.5f, 0);
-        animator.SetFloat("Sword", SwdCnt); //Blend를 이용해 일반공격과 스킬 애니메이션 구분 실행
-        animator.SetTrigger("sword_atk"); //공격 대미지 함수 실행은 애니메이션 부분에 들어있음
-    }
+    //void Sword_attack() //Sword 공격 관련 정보
+    //{
+    //    isdelay = true;
+    //    Dmg = (ATP + AtkPower + GridPower + VulcanPower) * WeaponsDmg[0];//변경함
+    //    box.size = new Vector2(2.5f, 2.5f);
+    //    box.offset = new Vector2(1.5f, 0);
+    //    animator.SetFloat("Sword", SwdCnt); //Blend를 이용해 일반공격과 스킬 애니메이션 구분 실행
+    //    animator.SetTrigger("sword_atk"); //공격 대미지 함수 실행은 애니메이션 부분에 들어있음
+    //}
 
-    void Axe_attack()   //Axe 공격 관련 정보
-    {
-        isdelay = true;
+    //void Axe_attack()   //Axe 공격 관련 정보
+    //{
+    //    isdelay = true;
+    //    Dmg = (ATP + AtkPower + GridPower + VulcanPower) * WeaponsDmg[1];
+    //    box.size = new Vector2(2.5f, 2.5f);
+    //    if (slideDir == 1)   //공격 방향별 box.offset값을 다르게 적용
+    //        box.offset = new Vector2(2, 0);
+    //    else
+    //        box.offset = new Vector2(1, 0);
+    //    //PlaySound("AxeAtk1");     유니티 애니메이션에 실행되게 추가해뒀음
 
-        if (curTime > 0)    //첫번째 공격후 쿨타임 내에 공격시 강공격 발동
-            AxeCnt++;
-        else
-            AxeCnt = 1;
-
-        if (AxeCnt == 1) // 동작별 대미지 변경
-        {
-            Dmg = (ATP + AtkPower + GridPower + VulcanPower) * WeaponsDmg[1];
-        }
-        else if (AxeCnt == 2)
-        {
-            Dmg = (ATP + AtkPower + GridPower + VulcanPower + 5) * WeaponsDmg[1];
-        }
-        box.size = new Vector2(2.5f, 2.5f);
-        if (slideDir == 1)   //공격 방향별 box.offset값을 다르게 적용
-            box.offset = new Vector2(2, 0);
-        else
-            box.offset = new Vector2(1, 0);
-        //PlaySound("AxeAtk1");     유니티 애니메이션에 실행되게 추가해뒀음
-
-        animator.SetFloat("Axe", AxeCnt); //Blend를 이용해 연속공격의 애니메이션 순차적 실행
-        animator.SetTrigger("axe_atk");
-
-
-        curTime = coolTime;  // 콤보 공격 제한시간
-
-        if (AxeCnt > 1)     //연속공격이 끝난후 다시 첫번째 공격값으로 변경
-            AxeCnt = 1;
-
-
-    }
+    //    //animator.SetFloat("Axe", AxeCnt); //Blend를 이용해 연속공격의 애니메이션 순차적 실행
+    //    animator.SetTrigger("axe_atk");
+    //}
 
     void Axe_chargeing()  //Axe 차징 스킬 관련
     {
         isdelay = true;
-        Speed = 0;
-        AxeCnt = 3;
+        //Speed = 0;
+        AxeCnt = 2;
         Dmg = (ATP + AtkPower + GridPower + VulcanPower) * 3 * WeaponsDmg[1];
         isCharging = false;
         chargeTimer = 0f;
-        animator.SetFloat("Axe", AxeCnt); //차징 공격은 Axe_atk3 짧은 애니메이션으로 실행
+
         animator.SetTrigger("axe_atk");
+        animator.SetFloat("Axe", AxeCnt); //차징 공격은 Axe_atk3 짧은 애니메이션으로 실행 
     }
     IEnumerator Bow_attack() //화살 일반공격 및 스킬 - 애니메이션 특정 부분에서 실행되게 유니티에서 설정함
     {
@@ -844,13 +813,13 @@ public class Player : MonoBehaviour
 
         if (slideDir == 1)   //공격 방향별 Arrowpos 위치값 변경
         {
-            ArrowposTransform.localPosition = new Vector3(0, -0.2f);
-            Arrowpos2Transform.localPosition = new Vector3(-0.3f, -0.5f);
+            ArrowposTransform.localPosition = new Vector3(0.7f, -0.2f);
+            Arrowpos2Transform.localPosition = new Vector3(0.7f, -0.5f);
         }
         else
         {
-            ArrowposTransform.localPosition = new Vector3(-0.3f, -0.2f);
-            Arrowpos2Transform.localPosition = new Vector3(-0.1f, -0.5f);
+            ArrowposTransform.localPosition = new Vector3(-0.7f, -0.2f);
+            Arrowpos2Transform.localPosition = new Vector3(-0.7f, -0.5f);
         }
 
         if (isSkill)
@@ -867,7 +836,7 @@ public class Player : MonoBehaviour
         {
             Instantiate(Arrow, Arrowpos.position, transform.rotation); // 기본 화살 복사 생성
             if (proLevel >= 2 && proSelectWeapon == 2)
-                Instantiate(Arrow2, Arrowpos2.position, transform.rotation);  // 증가된 화살 복사 생성
+                Instantiate(Arrow, Arrowpos2.position, transform.rotation);  // 증가된 화살 복사 생성
             PlaySound("BowAtk");
         }
 

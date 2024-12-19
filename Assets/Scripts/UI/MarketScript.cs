@@ -102,33 +102,51 @@ public class MarketScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyUp(KeyCode.E) && PlayerVisit == true)
+        if(PlayerVisit == true)
         {
-            if (MarketOpen == true)
+            if (Input.GetKeyUp(KeyCode.E))
             {
-                marketUiObject.SetActive(false);
-                MarketOpen = false;
-                KeyUiObject.SetActive(true);
-                Ui_Controller ui = Shared.gameMgr.GetComponent<Ui_Controller>();
-                ui.inven_ui.SetActive(false);
-                ui.openMarket = false;
-                Destroy(ui.DescriptionBox);
-                Time.timeScale = 1f;
+                if (MarketOpen == true)
+                {
+                    MarketIsClosed();
+                }
+                else
+                {
+                    MarketIsOpen();
+                }
             }
-            else
+            else if (Input.GetKeyUp(KeyCode.Escape))
             {
-                marketUiObject.SetActive(true);
-                MarketOpen = true;
-                KeyUiObject.SetActive(false);
-                Ui_Controller ui = Shared.gameMgr.GetComponent<Ui_Controller>();
-                ui.inven_ui.SetActive(true);
-                ui.openMarket = true;
-                Time.timeScale = 0f;
-                Invoke("SaveLastList",1f);
+                if (MarketOpen == true)
+                {
+                    MarketIsClosed();
+                }
             }
         }
+    }
 
+    void MarketIsOpen()
+    {
+        marketUiObject.SetActive(true);
+        MarketOpen = true;
+        KeyUiObject.SetActive(false);
+        Ui_Controller ui = Shared.gameMgr.GetComponent<Ui_Controller>();
+        ui.inven_ui.SetActive(true);
+        ui.openMarket = true;
+        Time.timeScale = 0f;
+        Invoke("SaveLastList", 1f);
+    }
 
+    void MarketIsClosed()
+    {
+        marketUiObject.SetActive(false);
+        MarketOpen = false;
+        KeyUiObject.SetActive(true);
+        Ui_Controller ui = Shared.gameMgr.GetComponent<Ui_Controller>();
+        ui.inven_ui.SetActive(false);
+        ui.openMarket = false;
+        Destroy(ui.DescriptionBox);
+        Time.timeScale = 1f;
     }
 
     private void OnTriggerEnter2D(Collider2D other)

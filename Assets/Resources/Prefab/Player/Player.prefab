@@ -1187,8 +1187,6 @@ MonoBehaviour:
   Speed: 0
   jumpPower: 0
   SpeedChange: 0
-  curTime: 0
-  coolTime: 2
   MasterSkillTime:
   - 40
   - 90
@@ -1238,8 +1236,8 @@ MonoBehaviour:
   chargingTime: 2
   isCharging: 0
   chargeTimer: 0
-  ArrowDistance: 0.75
   Axepro: 1
+  ArrowDistance: 0.75
   playerCanvas: {fileID: 7859401245331457298}
   spawnPoint: {x: 0, y: 0, z: 0}
   ATP: 0
@@ -1321,7 +1319,6 @@ MonoBehaviour:
   Ui: {fileID: 0}
   attackRange: {fileID: 7792324005262014766}
   Arrow: {fileID: 6371477986873845597, guid: 8004db967f8b04a42a482e4f52827cd9, type: 3}
-  Arrow2: {fileID: 6371477986873845597, guid: de8459e8763bbb64f96de00dd8d8c755, type: 3}
   Slash: {fileID: 6755171392198465549, guid: 8941430ca4a297042a39cb12a47caad1, type: 3}
   AxeSkill: {fileID: 4924464449046084317, guid: 9898e7bf43d3b3b4a9d426f5dd23e489, type: 3}
   BowSkill: {fileID: 16888911687298902, guid: 1d082e779f1e4be48821d14509e9369a, type: 3}
@@ -1353,7 +1350,7 @@ MonoBehaviour:
   movecamera: {fileID: 0}
   loading: {fileID: 0}
   rigid: {fileID: 0}
-  anim: {fileID: 0}
+  animator: {fileID: 0}
   UseGridSword: 0
   DivinePower: 0
   UsePastErase: 0
@@ -1362,7 +1359,7 @@ MonoBehaviour:
   UseMirror: 0
   UseVulcanArmor: 0
   UsePickGloves: 0
-  cam: {fileID: 0}
+  camera: {fileID: 0}
   TimeLoopAnim: {fileID: 7859401245638558401}
   TimeLoopSound: {fileID: 7859401245638558406}
   PastErase: {fileID: 0}

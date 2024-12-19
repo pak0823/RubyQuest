@@ -556,10 +556,10 @@ MonoBehaviour:
   - {fileID: 4746763056479210655, guid: f1b3c7b951d0e4240bd0bdfb3e7522a2, type: 3}
   - {fileID: 4746763056479210655, guid: a7140317a16757647ba4c30a83bc556d, type: 3}
   - {fileID: 4746763056479210655, guid: ee95cb5196c81a444bedcd73b15870cd, type: 3}
-  dm: {fileID: 0}
+  dataMgr: {fileID: 0}
   Loading_Screen: {fileID: 101756731}
   pause: 0
-  sm: {fileID: 1818438530}
+  soundMgr: {fileID: 0}
   StageMove: 0
 --- !u!4 &431385038
 Transform:
@@ -2728,17 +2728,6 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 3743811799620393801, guid: 79b65ae68eb72e945a69695de9caebea, type: 3}
   m_PrefabInstance: {fileID: 3743811801294174576}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &1818438530 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 8598819482354815171, guid: eed78868265b9f842889a3087433f19a, type: 3}
-  m_PrefabInstance: {fileID: 8598819482683882305}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 012107ae56df68644b6668200c2a305d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!95 &1857709160 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 3743811799594016024, guid: 79b65ae68eb72e945a69695de9caebea, type: 3}

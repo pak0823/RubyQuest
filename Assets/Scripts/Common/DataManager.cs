@@ -211,7 +211,7 @@ public class DataManager : MonoBehaviour
                             Shared.player.FirstMaterial = saveData.FristMaterial;
                             Shared.player.SecondMaterial = saveData.SecondMaterial;
                             Shared.player.ThirdMaterial = saveData.ThirdMaterial;
-                            OptionManager.instance.TotalPlayTime = saveData.PlayTime;
+                            Shared.optionMgr.TotalPlayTime = saveData.PlayTime;
                             Proficiency_ui.instance.proWeaponIndex = saveData.proWeaponSellect;
                             Proficiency_ui.instance.proLevel = saveData.proLevel;
                             Proficiency_ui.instance.Profill.fillAmount = saveData.proFill;
@@ -333,7 +333,7 @@ public class DataManager : MonoBehaviour
                     jsonsave.proWeaponSellect = Proficiency_ui.instance.proWeaponIndex;
                     jsonsave.proLevel = Proficiency_ui.instance.proLevel;
                     jsonsave.proFill = Proficiency_ui.instance.Profill.fillAmount;
-                    jsonsave.PlayTime = OptionManager.instance.TotalPlayTime;
+                    jsonsave.PlayTime = Shared.optionMgr.TotalPlayTime;
                     jsonsave.EnemyKill = Shared.player.EnemyKillCount;
                     jsonsave.TotalGetGold = Shared.player.TotalGetGold;
                     jsonsave.TotalDamaged = Shared.player.TotalDamaged;

@@ -4,7 +4,6 @@ using UnityEngine;
 using TMPro;
 public class OptionManager : MonoBehaviour
 {
-    public static OptionManager instance;
     public GameObject option_panel;
     private bool open_option = false;
 
@@ -21,10 +20,10 @@ public class OptionManager : MonoBehaviour
 
     private void Awake()
     {
-        if (instance == null)
+        if (Shared.optionMgr == null)
         {
-            instance = this;
-            DontDestroyOnLoad(instance);
+            Shared.optionMgr = this;
+            DontDestroyOnLoad(Shared.optionMgr);
         }
         else
         {
@@ -32,14 +31,6 @@ public class OptionManager : MonoBehaviour
         }
     }
 
-
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
     void Update()
     {
         if (Playing)
@@ -59,9 +50,12 @@ public class OptionManager : MonoBehaviour
                 }
                 if (!open_option)
                 {
-                    option_panel.SetActive(true);
-                    open_option = true;
-                    Select_Stack_Setting();
+                    if(!Shared.marketScript.MarketOpen)
+                    {
+                        option_panel.SetActive(true);
+                        open_option = true;
+                        Select_Stack_Setting();
+                    }
                 }
                 else
                 {

@@ -413,16 +413,7 @@ public abstract class Enemy : MonoBehaviour
                 arrow = collision.GetComponent<Arrow>();
                 if (arrow != null)
                 {
-                    Pdamage = arrow.Dmg;
-                    StartCoroutine(Hit(Pdamage));
-                }
-            }
-            else if (collision.tag == "Skill_arrow")
-            {
-                arrow = collision.GetComponent<Arrow>();
-                if (arrow != null)
-                {
-                    Pdamage = arrow.SkillDmg;
+                    Pdamage = arrow.ArrowDamage;
                     StartCoroutine(Hit(Pdamage));
                 }
             }

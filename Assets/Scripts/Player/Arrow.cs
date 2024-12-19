@@ -1,77 +1,75 @@
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using System.Linq;
+using Unity.VisualScripting;
 
 public class Arrow : MonoBehaviour
 {
-    public Player player; // Player 스크립트를 가지고 있는 GameObject
-    public Enemy enemy;
+    private Player player;
+    
+    public float ArrowDamage = 0.0f; //대미지 변수, 몬스터가 피격시 화살 데미지값을 받기 위해
+    public float ArrowSpeed = 18.0f; // 화살 이동 속도
+    private float rotationSpeed = 10.0f; // 회전 속도 변수
+    private float detectRadius = 10f; // 화살의 추적 범위 (적이 있는지 없는지 확인)
+    private bool isSkill = false; // 스킬 사용 여부
+    private bool hit = false;    // 적을 맞췄는지 확인하는 변수
+
+    private Vector3 moveDirection = Vector3.right; // 화살의 시작 방향
     public LayerMask islayer; // 충돌 감지를 할 레이어
-    public Transform pos; // 화살 위치 정보
-    public float Dmg = 1; //대미지 변수, 몬스터가 피격시 화살 데미지값을 받기 위해
-    public float SkillDmg = 2;
-    public float speed = 20f; // 화살 이동 속도
-    public bool isSkill = false; // 스킬 사용 여부
-    public BoxCollider2D box;   // 화살 박스 콜라이더
-    private Vector3 moveDirection = Vector3.right; // 화살이 나가는 방향
-    private float detectRadius = 2.5f; // 화살이 감지할 수 있는 반경 (적이 있는지 없는지 확인)
-    public SpriteRenderer spriteRenderer;
-    public BoxCollider2D boxcollider2d;
-    public bool hit = false;    // 적을 맞췄는지 확인하는 변수
+
+    private BoxCollider2D Arrowcollider;
+    private SpriteRenderer spriteRenderer;
     private Dictionary<Collider2D, bool> hitDict = new Dictionary<Collider2D, bool>(); // 이미 적에게 대미지를 입혔는지 여부를 기록하는 Dictionary 변수
+
+    private float DestroyTime = 1.5f;  //화살 생존 시간
 
     private void Awake()
     {
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        Arrowcollider = GetComponent<BoxCollider2D>();
         player = Shared.player;
-        Dmg = (player.ATP + player.AtkPower + player.GridPower + player.VulcanPower) * player.WeaponsDmg[2];
-        SkillDmg = (player.ATP + player.AtkPower + player.GridPower + player.VulcanPower) * 2.5f;
-        if (player.isSkill == true)
-        {
-            isSkill = true; // 스킬 사용 중이면 SetSkill 변수를 true로 설정
-        }
-        else
-        {
-            isSkill = false; // 스킬 사용 중이 아니면 SetSkill 변수를 false로 설정
-        }
+
+        ArrowStartSetting();
     }
 
     private void Start()
     {
-        Invoke("DestroyArrow", player.ArrowDistance); // 일정 시간이 지난 후 화살을 제거하는 Invoke 함수를 호출
-        pos = transform;
-        if (player != null)
-        {
-            if (player.GetComponent<SpriteRenderer>().flipX)
-            {
-                // 플레이어가 오른쪽을 바라보면 화살을 오른쪽으로 발사
-                moveDirection = Vector3.right;
-                spriteRenderer.flipX = false;
-                if(isSkill)
-                    box.offset = new Vector2(0.8f, 0);
-                else
-                    box.offset = new Vector2(0.4f, 0);
-            }
-            else
-            {
-                // 플레이어가 왼쪽을 바라보면 화살을 왼쪽으로 발사
-                moveDirection = Vector3.left;
-                spriteRenderer.flipX = true;
-                if (isSkill)
-                    box.offset = new Vector2(-0.8f, 0);
-                else
-                    box.offset = new Vector2(-0.4f, 0);
-            }
-        }
+        StartCoroutine(DestroyArrow());
+        StartCoroutine(ChaseArrow());
     }
 
+    void ArrowStartSetting()// 플레이어가 보는 방향에 맞게 화살 발사
+    {
+        isSkill = player.isSkill;
+        
+        if (player != null)
+        {
+            moveDirection = player.spriteRenderer.flipX ? Vector3.right : Vector3.left;
+            spriteRenderer.flipX = !player.spriteRenderer.flipX;
 
-    Collider2D FindCollider(Collider2D[] colliders)// 가장 가까운 적 찾기
+            if(isSkill)
+            {
+                ArrowDamage = ArrowDamage * 2.5f;
+                ArrowSpeed = 20f;
+            }
+                
+        }
+
+        ArrowDamage = (player.ATP + player.AtkPower + player.GridPower + player.VulcanPower) * player.WeaponsDmg[2];
+    }
+
+    // 가장 가까운 적 찾기
+    Collider2D FindCollider(Collider2D[] colliders)
     {
         Collider2D closestCollider = null;
         float distance = float.MaxValue;
         foreach (Collider2D coll in colliders)
         {
-            if (LayerMask.LayerToName(coll.gameObject.layer) != "Pad" && LayerMask.LayerToName(coll.gameObject.layer) != "Tilemap")
+            if (coll == null)
+                continue;
+
+            if ((islayer & (1 << coll.gameObject.layer)) != 0)
             {
                 float tempDist = Vector2.Distance(transform.position, coll.transform.position);
                 if (tempDist < distance)
@@ -80,44 +78,64 @@ public class Arrow : MonoBehaviour
                     distance = tempDist;
                 }
             }
+            else
+                return null;
         }
         return closestCollider;
     }
 
-    private void Update()
+    // 몬스터 추적 화살 기능
+    IEnumerator ChaseArrow()    //Update함수에 구현했던것을 코루틴 함수에 while문을 추가하여 Update함수와 같은 효과를 주었음.
     {
-        // 화살 탐지 기능 추가
-        Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, detectRadius, islayer);
-        Collider2D closestCollider = FindCollider(hitColliders);
-
-        if (isSkill == true) // 스킬일 때
+        while(true)
         {
-            pos.position += moveDirection * speed * Time.deltaTime; // 화살 직진 이동
-        }
-        else
-        {
-            if (player.proSelectWeapon == 2 && closestCollider != null && closestCollider.tag != "Wall" && closestCollider.tag != "Pad" && closestCollider.tag != "Tilemap" && player.proLevel >= 1) // 일정 거리 내에 적이 있으면 가장 가까운 적으로 이동
+            if (player.proLevel > 0 && !isSkill) // 일정 거리 내에 적이 있으면 가장 가까운 적으로 이동
             {
+                Collider2D[] hitColliders = Physics2D.OverlapCircleAll(transform.position, detectRadius, islayer);
+                Collider2D closestCollider = FindCollider(hitColliders);
+
+                ArrowSpeed = 13.0f;
+
                 if (hitColliders.Length > 0)
                 {
                     Vector2 direction = (closestCollider.transform.position - transform.position).normalized;
-                    Quaternion rotation = Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg); // 화살 각도 변경
-                    Vector2 pos2D = new Vector2(pos.position.x, pos.position.y);
-                    pos.rotation = rotation;
-                    pos2D += speed * Time.deltaTime * direction;
-                    pos.position = new Vector3(pos2D.x, pos2D.y, pos.rotation.z);
+
+                    //현재 각도와 목표 각도 계산
+                    float targetAngle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+                    float currentAngle = transform.rotation.eulerAngles.z;
+
+                    //각도 차이 계산
+                    float angleDifference = Mathf.DeltaAngle(currentAngle, targetAngle);
+
+                    //각도 줄이기
+                    if (Mathf.Abs(angleDifference) > 0.1f)
+                    {
+                        float newAngle = currentAngle + Mathf.Sign(angleDifference) * rotationSpeed * 20f * Time.deltaTime;
+                        transform.rotation = Quaternion.Euler(0, 0, newAngle);
+                    }
+
+                    //현재 각도와 맞게 이미지 회전
+                    spriteRenderer.transform.rotation = Quaternion.Euler(0, 0, transform.rotation.eulerAngles.z);
+
+                    Vector2 pos2D = new Vector2(transform.position.x, transform.position.y);
+                    pos2D += ArrowSpeed * Time.deltaTime * direction;
+                    transform.position = new Vector3(pos2D.x, pos2D.y, transform.rotation.z);
                 }
+                else
+                    transform.position += moveDirection * ArrowSpeed * Time.deltaTime;
             }
             else
             {
-                pos.position += moveDirection * speed * Time.deltaTime; // 화살 직진 이동
+                transform.position += moveDirection * ArrowSpeed * Time.deltaTime; // 화살 직진 이동
             }
+
+            yield return null; // 다음 프레임으로 이동
         }
     }
 
-    private void OnTriggerEnter2D(Collider2D collision) //화살이 충돌시 확인후 공격 및 사라지게함
+    private void OnTriggerEnter2D(Collider2D collision) //화살 충돌 처리
     {
-        if (collision.tag == "Enemy")
+        if (collision.tag == "Enemy" || collision.tag == "Boss")
         {
             if (isSkill == true && !hitDict.ContainsKey(collision)) // 스킬 사용 중이고, 이미 적에게 대미지를 입힌 경우가 아닐 때
             {
@@ -126,33 +144,33 @@ public class Arrow : MonoBehaviour
             else 
             {
                 hit  = true;
-                Off();
-                Invoke("DestroyArrow", 3f);
+                Destroy(gameObject);
             }
         }
-        else if (collision.tag == "Wall" || collision.tag == "Tilemap") // 벽이나 땅에 맞으면 화살 사라짐 패드는 없는게 나은것 같아서 뺐음
+        else if (collision.tag == "Wall" || collision.tag == "Tilemap")
         {
-            if(!isSkill)
+            if(!isSkill && player.proLevel < 1)
             {
                 if (hit)
                 {
                     return;
                 }
-                Off();
-                Invoke("DestroyArrow", 3f);
+                Destroy(gameObject);
             }
         }
     }
 
-    public void DestroyArrow()  // 화살 제거 함수
+    IEnumerator DestroyArrow()  // 화살 제거 함수
     {
+        yield return new WaitForSeconds(DestroyTime);
         Destroy(gameObject);
     }
-    public void Off()
+
+    private void OnDrawGizmos()
     {
-        CancelInvoke();
-        spriteRenderer.enabled = false;
-        boxcollider2d.enabled = false;
+        // 화살의 현재 위치에서 detectRadius 범위를 시각적으로 표시
+        Gizmos.color = Color.red; // 원의 색상 설정
+        Gizmos.DrawWireSphere(transform.position, detectRadius); // 원형 범위 그리기
     }
 }
 

@@ -17,18 +17,6 @@ public class OptionScript : MonoBehaviour
         NoBorder
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     void ValueChange()
     {
         
@@ -61,9 +49,9 @@ public class OptionScript : MonoBehaviour
         {
             Shared.loading.Load();
         }
-        OptionManager.instance.Playing = false;
-        OptionManager.instance.Timer.SetActive(false);
-        OptionManager.instance.Stacks.SetActive(false);
+        Shared.optionMgr.Playing = false;
+        Shared.optionMgr.Timer.SetActive(false);
+        Shared.optionMgr.Stacks.SetActive(false);
         sm.Wait_And_SceneLoader("Main_Scene");
         this.gameObject.SetActive(false);
     }

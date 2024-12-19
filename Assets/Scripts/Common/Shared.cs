@@ -8,6 +8,7 @@ public static class Shared
     public static SoundManager soundMgr;
     public static DataManager dataMgr;
     public static GameManager gameMgr;
+    public static OptionManager optionMgr;
     public static Player player;
     public static Loading loading;
     public static MoveCamera movecamera;

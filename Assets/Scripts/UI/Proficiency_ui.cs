@@ -199,7 +199,7 @@ public class Proficiency_ui : MonoBehaviour
                 if (proLevel >= 1)
                 {
                     Pro1SkillName.text = "사냥꾼의 감각";
-                    Pro1SkillText.text = "기본공격이 적을 향해 추적해 날아갑니다. 지형관통 불가";
+                    Pro1SkillText.text = "기본공격이 적을 향해 추적해 날아갑니다. (화살 투사체 속도 감소 및 지형관통 가능)";
                     TextAligmentTopLeft(Pro1SkillText);
                 }
                 if (proLevel >= 2)
